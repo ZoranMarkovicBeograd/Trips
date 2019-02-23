@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Support\Facades\Auth;
 use App\Trips;
 use Carbon\Carbon;
 
@@ -17,11 +17,11 @@ class FutureTripsController
 
     public function index()
     {
+        $user = Auth::user();
         $now = Carbon::now();
-       $limit = $now->addDays(30);
-       $limit = $limit->toDateString();
-       $futureTrips = Trips::where('departure','<=',$limit)->get();
-      return view('futureTrips', ['futureTrips' => $futureTrips ] );
+        $limit = $now->toDateString();
+       $futureTrips = Trips::where('arrival','>',$limit)->where('user_id', '=', $user->id)->get();
+      return view('futureTrips', ['trips' => $futureTrips ] );
 
     }
 }
